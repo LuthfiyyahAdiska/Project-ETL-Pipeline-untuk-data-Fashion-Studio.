@@ -1,0 +1,4 @@
+Nama: Luthfiyyah Adiska 
+Link Google Sheets: https://docs.google.com/spreadsheets/d/1DpF-uYjNgLxrR3czssjIsp2-Yu0GVHMC0zqzjnyQVXE/edit?gid=0#gid=0
+Link Supabase Table: https://supabase.com/dashboard/project/klogkmvbkexijcjchflx/editor/17547?schema=public
+Keterangan: Project ETL Pipeline untuk data Fashion Studio.
