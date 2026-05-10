@@ -1,4 +1,7 @@
 google-sheets-api.json
+etl-submission-pemda-b82b806d5816.json
 __pycache__/
 *.pyc
 .env
+.coverage
+.pytest_cache/

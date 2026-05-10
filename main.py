@@ -1,22 +1,26 @@
-from utils.extract import scrape_fashion_studio
-from utils.transform import clean_data
-from utils.load import save_to_csv, save_to_google_sheets, save_to_postgresql
+from utils.extract import scrape_all
+from utils.transform import transform_data
+from utils.load import save_to_csv, save_to_gsheets, save_to_supabase
 
 def main():
-    raw_data = scrape_fashion_studio()
-    cleaned_data = clean_data(raw_data)
+    print("START")
 
-    print("\n[3/3] Sedang menyimpan data...")
-    
-    save_to_csv(cleaned_data, 'products.csv')
-    
-    SPREADSHEET_ID = '1DpF-uYjNgLxrR3czssjIsp2-Yu0GVHMC0zqzjnyQVXE' 
-    save_to_google_sheets(cleaned_data, SPREADSHEET_ID)
-    
-    DB_URI = 'postgresql://postgres.klogkmvbkexijcjchflx:3tlf4510nluthf1yy4@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres'
-    save_to_postgresql(cleaned_data, DB_URI)
-    
-    print("\n=== ✨ Proses ETL Pipeline Selesai! ✨ ===")
+    # EXTRACT
+    data = scrape_all()
+    print("EXTRACT:", len(data))
+
+    # TRANSFORM
+    df = transform_data(data)
+    print("TRANSFORM:", len(df))
+
+    # LOAD
+    save_to_csv(df)
+    save_to_gsheets(df)
+    save_to_supabase(df)
+
+    print(df.head())
+    print(df.columns)
+    print("DONE")
 
 if __name__ == "__main__":
     main()

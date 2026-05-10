@@ -1,28 +1,24 @@
-import unittest
-import pandas as pd
-from utils.transform import clean_data
+import sys
+import os
 
-class TestTransform(unittest.TestCase):
-    def setUp(self):
-        self.raw_data = pd.DataFrame({
-            'Title': ['T-shirt 1', 'Unknown Product'],
-            'Price': ['$10.0', '$20.0'],
-            'Rating': ['Rating: 4.5 / 5', 'Invalid Rating'],
-            'Colors': ['3 Colors', '1 Color'],
-            'Size': ['Size: M', 'Size: L'],
-            'Gender': ['Gender: Men', 'Gender: Women']
-        })
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-    def test_clean_data_output(self):
-        result = clean_data(self.raw_data)
-        
-        self.assertEqual(len(result), 1)
-        
-        self.assertEqual(result['Price'].iloc[0], 160000.0)
-        
-        self.assertEqual(result['Size'].iloc[0], 'M')
-        
-        self.assertIn('timestamp', result.columns)
+from utils.transform import transform_data
 
-if __name__ == '__main__':
-    unittest.main()
+def test_transform_valid():
+    data = [{
+        "Title": "T-shirt",
+        "Price": "$10.00",
+        "Rating": "Rating: ⭐ 4.5 / 5",
+        "Colors": "3 Colors",
+        "Size": "Size: M",
+        "Gender": "Gender: Men",
+        "timestamp": "2025"
+    }]
+
+    df = transform_data(data)
+
+    assert not df.empty
+    assert df.iloc[0]["Price"] == 160000
+    assert df.iloc[0]["Rating"] == 4.5
+    assert df.iloc[0]["Colors"] == 3
