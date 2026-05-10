@@ -28,8 +28,37 @@ def test_save_to_csv_error():
 
 
 # ==========================================
-# TEST save_to_gsheets (mock, tanpa akses real)
+# TEST save_to_gsheets
 # ==========================================
+def test_save_to_gsheets_success(monkeypatch):
+    import utils.load as load_module
+    
+    # Mock os.path.exists to return True
+    monkeypatch.setattr("os.path.exists", lambda x: True)
+    
+    # Mock Credentials
+    class FakeCreds:
+        pass
+    monkeypatch.setattr(load_module.Credentials, "from_service_account_file", lambda *args, **kwargs: FakeCreds())
+    
+    # Mock gspread client
+    class FakeSheet:
+        def clear(self): pass
+        def update(self, *args, **kwargs): pass
+    
+    class FakeClient:
+        def open_by_key(self, key):
+            class Obj:
+                sheet1 = FakeSheet()
+            return Obj()
+            
+    monkeypatch.setattr(load_module.gspread, "authorize", lambda creds: FakeClient())
+    
+    df = pd.DataFrame({"A": [1, 2]})
+    result = save_to_gsheets(df)
+    assert result is True
+
+
 def test_save_to_gsheets_error(monkeypatch):
     """Test bahwa error di Google Sheets ditangani dengan baik."""
     monkeypatch.setattr("os.path.exists", lambda x: False)
@@ -41,8 +70,26 @@ def test_save_to_gsheets_error(monkeypatch):
 
 
 # ==========================================
-# TEST save_to_supabase (mock, tanpa akses real)
+# TEST save_to_supabase
 # ==========================================
+def test_save_to_supabase_success(monkeypatch):
+    import utils.load as load_module
+    
+    # Mock environment
+    monkeypatch.setenv("SUPABASE_KEY", "fake_key")
+    
+    # Mock requests.delete and requests.post
+    class FakeResponse:
+        def raise_for_status(self): pass
+        
+    monkeypatch.setattr(load_module.http_requests, "delete", lambda *args, **kwargs: FakeResponse())
+    monkeypatch.setattr(load_module.http_requests, "post", lambda *args, **kwargs: FakeResponse())
+    
+    df = pd.DataFrame({"Title": ["Test"], "Price": [100]})
+    result = save_to_supabase(df)
+    assert result is True
+
+
 def test_save_to_supabase_no_key(monkeypatch):
     """Test bahwa tanpa SUPABASE_KEY, fungsi return False."""
     monkeypatch.delenv("SUPABASE_KEY", raising=False)

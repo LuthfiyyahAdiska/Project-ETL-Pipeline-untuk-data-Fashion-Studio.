@@ -1,4 +1,5 @@
 import requests
+import time
 from utils import extract
 
 
@@ -28,6 +29,7 @@ def test_scrape_success(monkeypatch):
             return FakeResponse()
 
     monkeypatch.setattr(extract.requests, "Session", lambda: FakeSession())
+    monkeypatch.setattr(extract.time, "sleep", lambda x: None)
 
     result = extract.scrape_all()
 
@@ -44,6 +46,7 @@ def test_scrape_request_error(monkeypatch):
             raise Exception("forced error")
 
     monkeypatch.setattr(extract.requests, "Session", lambda: FakeSession())
+    monkeypatch.setattr(extract.time, "sleep", lambda x: None)
 
     result = extract.scrape_all()
 
@@ -74,6 +77,7 @@ def test_scrape_parse_error(monkeypatch):
             return FakeResponse()
 
     monkeypatch.setattr(extract.requests, "Session", lambda: FakeSession())
+    monkeypatch.setattr(extract.time, "sleep", lambda x: None)
 
     result = extract.scrape_all()
 

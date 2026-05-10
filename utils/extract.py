@@ -1,4 +1,5 @@
 import requests
+import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -44,5 +45,8 @@ def scrape_all():
 
             except:
                 continue
+        
+        # Jeda waktu agar tidak kena rate limit
+        time.sleep(1)
 
     return data
